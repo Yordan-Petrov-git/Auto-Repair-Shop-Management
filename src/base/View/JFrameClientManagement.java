@@ -1,0 +1,1912 @@
+package base.View;
+
+import base.Cars_Db_clients;
+import base.Connection.MyCNX;
+import base.TableUtils.ResizeForJTables;
+import base.Validators.EmailValidUtil;
+import base.Validators.PhoneNumberVerifif;
+import base.User;
+import com.model.table.ClientsTableModel;
+import java.awt.Color;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
+import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
+import javax.swing.BorderFactory;
+import javax.swing.border.Border;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.util.List;
+
+/**
+ * Form for client information entry
+ *
+ * @author 0896
+ */
+public class JFrameClientManagement extends javax.swing.JFrame {
+
+    //Coordinats for jform mouse draging
+    int xMouse;
+    int yMouse;
+    //Connection to SQL DB
+    Connection connct = MyCNX.getConnection();
+    //SQL Prepared Statement
+    private PreparedStatement preparedStatement;
+    //Table model for the clients
+    ClientsTableModel productTableModel;
+    //Page navigation
+    Integer page = 1;
+    Integer rowCountPerPage = 5;
+    Integer totalPage = 1;
+    Integer totalData = 0;
+
+    public JFrameClientManagement() {
+        initComponents();
+        
+         seticon();//Sets icon
+
+        //Disables copy pasete functionality 
+        jTxtFld_ClientName.setTransferHandler(null);//Client name
+        jTxtFld_ClientFName.setTransferHandler(null);//Clietn family name
+        jTxtFld_ClientPhoneNum.setTransferHandler(null);//Client phoone number
+        jTxtFld_ClientPhoneNumAlt.setTransferHandler(null);//Client alternative phoen number
+        jTxtFld_ClientEmail.setTransferHandler(null);//Client mail
+        jTxtFld_ClientEmailSecond.setTransferHandler(null);//Cleint alternetive mail
+
+        //Centers the form
+        this.setLocationRelativeTo(null);
+        //Sets bacground to transparent
+        this.setBackground(new Color(0, 0, 0, 0));
+
+        //Add values to combobox for pagination
+        jComboBoxPage.addItem("10");
+        jComboBoxPage.addItem("20");
+        jComboBoxPage.addItem("30");
+        jComboBoxPage.addItem("40");
+        jComboBoxPage.addItem("50");
+        jComboBoxPage.addItem("60");
+        jComboBoxPage.addItem("70");
+        jComboBoxPage.addItem("80");
+        jComboBoxPage.addItem("90");
+        jComboBoxPage.addItem("100");
+
+        jComboBoxPage.addItemListener(new ItemListener() {
+            // Change data in jtable on combobox change 
+            public void itemStateChanged(ItemEvent e) {
+                initPagination();////Shows specific amaunt of rows in the jtable on combobox selection
+            }
+        });
+        initPagination();//Shows first paged rows in the jtable 
+    }
+
+    private void initPagination() {
+   //Initializes pagiantion of rows in jtable
+       //Counts total rows in SQL DB
+        totalData = count();
+        //Testing coutn utput
+        System.out.println(totalData);
+
+        rowCountPerPage = Integer.valueOf(jComboBoxPage.getSelectedItem().toString());
+        Double totalPageD = Math.ceil(totalData.doubleValue() / rowCountPerPage.doubleValue());
+        totalPage = totalPageD.intValue();
+        //Bquttons for page navigation
+          //Buttons for first page adn next page
+        if (page.equals(1)) {
+            jButtonFirst.setEnabled(false);
+            jButtonPrevious.setEnabled(false);
+        } else {
+            jButtonFirst.setEnabled(true);
+            jButtonPrevious.setEnabled(true);
+        }
+       //Buittons for last apge and next page
+        if (page.equals(totalPage)) {
+            jButtonLast.setEnabled(false);
+            jButtonNext.setEnabled(false);
+        } else {
+            jButtonLast.setEnabled(true);
+            jButtonNext.setEnabled(true);
+        }
+
+        if (page > totalPage) {
+            page = 1;
+        }
+        //New instance of table for client table model
+        productTableModel = new ClientsTableModel();
+        //Popialte table
+        productTableModel.setList(findAll(page, rowCountPerPage));
+        //Set model
+        jTblClients.setModel(productTableModel);
+        jLabelStatusHalaman.setText("Page " + page + " for " + totalPage);//Page position count
+        jLabelTotalData.setText(("Row count " + totalData));//Row count
+        //Resizes jtables columns
+        ResizeForJTables.autoResizeColumn(jTblClients);
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jFrmClientCarCheck = new javax.swing.JFrame();
+        jPnlSeeCarOwners = new javax.swing.JPanel();
+        jLblClId = new javax.swing.JLabel();
+        jTxtClId = new javax.swing.JTextField();
+        jLblCLname = new javax.swing.JLabel();
+        jTxtFldClName = new javax.swing.JTextField();
+        jLblCarsOwned = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        jTb_Cars = new javax.swing.JTable();
+        jLblCarChkBackground = new javax.swing.JLabel();
+        jPnlTopBar = new javax.swing.JPanel();
+        jLblCarChkCls = new javax.swing.JLabel();
+        jLvlCarChkMin = new javax.swing.JLabel();
+        jLblcCarChk = new javax.swing.JLabel();
+        jFrmCarAdd = new javax.swing.JFrame();
+        jPnlMain = new javax.swing.JPanel();
+        jLblCarAddNumReg = new javax.swing.JLabel();
+        jTxtFldRegNCA = new javax.swing.JTextField();
+        jBtnCarAdd = new javax.swing.JButton();
+        jBtnShowAllCrs = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTblCarAdd = new javax.swing.JTable();
+        jLblMainImage = new javax.swing.JLabel();
+        jPnlTopCarrAdd = new javax.swing.JPanel();
+        jLblTopOfCAddClose = new javax.swing.JLabel();
+        jLblTopOfCAddMin = new javax.swing.JLabel();
+        jLblTopCarrAdd = new javax.swing.JLabel();
+        jPnlALL = new javax.swing.JPanel();
+        jPnlTop = new javax.swing.JPanel();
+        jLabel_minimizeClMan = new javax.swing.JLabel();
+        jLbl_minClMan = new javax.swing.JLabel();
+        jLblTopClMan = new javax.swing.JLabel();
+        jLbl_clts = new javax.swing.JLabel();
+        jPnl_ClinetManagement = new javax.swing.JPanel();
+        jTxtFld_ClientID = new javax.swing.JTextField();
+        jTxtFld_ClientName = new javax.swing.JTextField();
+        jTxtFld_ClientFName = new javax.swing.JTextField();
+        jTxtFld_ClientPhoneNum = new javax.swing.JTextField();
+        jTxtFld_ClientPhoneNumAlt = new javax.swing.JTextField();
+        jTxtFld_ClientEmail = new javax.swing.JTextField();
+        jTxtFld_ClientEmailSecond = new javax.swing.JTextField();
+        jBtnAddUserInTbl = new javax.swing.JButton();
+        jBtnUpdateUserInTbl = new javax.swing.JButton();
+        jBtnDelUserInTbl = new javax.swing.JButton();
+        jBtnClear = new javax.swing.JButton();
+        jBtb_AddNCar = new javax.swing.JButton();
+        jBtnCarOwnChk = new javax.swing.JButton();
+        jLblSearchBy = new javax.swing.JLabel();
+        jCmbBxOrdrAscDsc = new javax.swing.JComboBox<>();
+        jComBoxSearchClBy = new javax.swing.JComboBox<>();
+        jTxtFld_Srch = new javax.swing.JTextField();
+        jBtnBack = new javax.swing.JButton();
+        jLbl_ClientID = new javax.swing.JLabel();
+        jLbl_ClientName = new javax.swing.JLabel();
+        jLbl_ClientFName = new javax.swing.JLabel();
+        jLbl_ClientPhoneNum = new javax.swing.JLabel();
+        jLblAltPhoneNum = new javax.swing.JLabel();
+        jLbl_ClientEmail = new javax.swing.JLabel();
+        jLbl_ClientEmailSecond = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTblClients = new javax.swing.JTable();
+        jPnlPaging = new javax.swing.JPanel();
+        jButtonLast = new javax.swing.JButton();
+        jButtonNext = new javax.swing.JButton();
+        jComboBoxPage = new javax.swing.JComboBox();
+        jButtonPrevious = new javax.swing.JButton();
+        jButtonFirst = new javax.swing.JButton();
+        jLabelStatusHalaman = new javax.swing.JLabel();
+        jLabelTotalData = new javax.swing.JLabel();
+        jLblPIC = new javax.swing.JLabel();
+
+        jFrmClientCarCheck.setMinimumSize(new java.awt.Dimension(1092, 592));
+        jFrmClientCarCheck.setUndecorated(true);
+        jFrmClientCarCheck.setResizable(false);
+        jFrmClientCarCheck.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPnlSeeCarOwners.setBackground(new java.awt.Color(0, 84, 140));
+        jPnlSeeCarOwners.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLblClId.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLblClId.setForeground(new java.awt.Color(255, 255, 255));
+        jLblClId.setText("Customer ID :");
+        jPnlSeeCarOwners.add(jLblClId, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, -1, -1));
+
+        jTxtClId.setEditable(false);
+        jTxtClId.setBackground(new java.awt.Color(62, 62, 62));
+        jTxtClId.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jTxtClId.setForeground(new java.awt.Color(255, 255, 255));
+        jTxtClId.setFocusable(false);
+        jTxtClId.setOpaque(false);
+        jPnlSeeCarOwners.add(jTxtClId, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 110, -1));
+
+        jLblCLname.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLblCLname.setForeground(new java.awt.Color(255, 255, 255));
+        jLblCLname.setText("Name of customer :");
+        jPnlSeeCarOwners.add(jLblCLname, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, -1, -1));
+
+        jTxtFldClName.setEditable(false);
+        jTxtFldClName.setBackground(new java.awt.Color(62, 62, 62));
+        jTxtFldClName.setFont(new java.awt.Font("Arial", 0, 18)); // NOI18N
+        jTxtFldClName.setForeground(new java.awt.Color(255, 255, 255));
+        jTxtFldClName.setFocusable(false);
+        jTxtFldClName.setOpaque(false);
+        jPnlSeeCarOwners.add(jTxtFldClName, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 170, -1));
+
+        jLblCarsOwned.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLblCarsOwned.setForeground(new java.awt.Color(255, 255, 255));
+        jLblCarsOwned.setText("Cars owned :");
+        jPnlSeeCarOwners.add(jLblCarsOwned, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 20, 130, -1));
+
+        jTb_Cars.setBackground(new java.awt.Color(62, 62, 62));
+        jTb_Cars.setForeground(new java.awt.Color(255, 255, 255));
+        jTb_Cars.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "REG", "VIN", "MAKE", "MODEL", "Mileage", "type", "fueling", "gearbox", "drivetrain", "CC", "POWER"
+            }
+        ));
+        jTb_Cars.getTableHeader().setReorderingAllowed(false);
+        jTb_Cars.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTb_CarsMouseClicked(evt);
+            }
+        });
+        jTb_Cars.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTb_CarsKeyReleased(evt);
+            }
+        });
+        jScrollPane3.setViewportView(jTb_Cars);
+
+        jPnlSeeCarOwners.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 50, 980, 490));
+
+        jLblCarChkBackground.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/Aqua Marine.jpg"))); // NOI18N
+        jPnlSeeCarOwners.add(jLblCarChkBackground, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 1190, 540));
+
+        jFrmClientCarCheck.getContentPane().add(jPnlSeeCarOwners, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 1210, 560));
+
+        jPnlTopBar.setBackground(new java.awt.Color(51, 51, 51));
+        jPnlTopBar.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLblCarChkCls.setBackground(new java.awt.Color(255, 0, 51));
+        jLblCarChkCls.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLblCarChkCls.setForeground(new java.awt.Color(255, 255, 255));
+        jLblCarChkCls.setText("  x");
+        jLblCarChkCls.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 255, 255)));
+        jLblCarChkCls.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLblCarChkClsMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLblCarChkClsMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jLblCarChkClsMouseExited(evt);
+            }
+        });
+        jPnlTopBar.add(jLblCarChkCls, new org.netbeans.lib.awtextra.AbsoluteConstraints(1180, 0, 30, 30));
+
+        jLvlCarChkMin.setBackground(new java.awt.Color(153, 153, 153));
+        jLvlCarChkMin.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLvlCarChkMin.setForeground(new java.awt.Color(255, 255, 255));
+        jLvlCarChkMin.setText("  -");
+        jLvlCarChkMin.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 255, 255)));
+        jLvlCarChkMin.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLvlCarChkMin.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLvlCarChkMinMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLvlCarChkMinMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jLvlCarChkMinMouseExited(evt);
+            }
+        });
+        jPnlTopBar.add(jLvlCarChkMin, new org.netbeans.lib.awtextra.AbsoluteConstraints(1150, 0, 30, 30));
+
+        jLblcCarChk.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                jLblcCarChkMouseDragged(evt);
+            }
+        });
+        jLblcCarChk.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLblcCarChkMouseClicked(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLblcCarChkMousePressed(evt);
+            }
+        });
+        jPnlTopBar.add(jLblcCarChk, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1210, 30));
+
+        jFrmClientCarCheck.getContentPane().add(jPnlTopBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1210, 30));
+
+        jFrmCarAdd.setUndecorated(true);
+        jFrmCarAdd.setResizable(false);
+        jFrmCarAdd.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPnlMain.setBackground(new java.awt.Color(0, 84, 140));
+        jPnlMain.setMaximumSize(new java.awt.Dimension(1000, 530));
+        jPnlMain.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLblCarAddNumReg.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLblCarAddNumReg.setForeground(new java.awt.Color(255, 255, 255));
+        jLblCarAddNumReg.setText("Registration number :");
+        jPnlMain.add(jLblCarAddNumReg, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, -1, 20));
+
+        jTxtFldRegNCA.setEditable(false);
+        jTxtFldRegNCA.setOpaque(false);
+        jPnlMain.add(jTxtFldRegNCA, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 70, 180, -1));
+
+        jBtnCarAdd.setBackground(new java.awt.Color(0, 84, 140));
+        jBtnCarAdd.setForeground(new java.awt.Color(255, 255, 255));
+        jBtnCarAdd.setText("add");
+        jBtnCarAdd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnCarAddActionPerformed(evt);
+            }
+        });
+        jPnlMain.add(jBtnCarAdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 130, 90, -1));
+
+        jBtnShowAllCrs.setBackground(new java.awt.Color(0, 84, 140));
+        jBtnShowAllCrs.setForeground(new java.awt.Color(255, 255, 255));
+        jBtnShowAllCrs.setText("Show ALL cars");
+        jBtnShowAllCrs.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnShowAllCrsActionPerformed(evt);
+            }
+        });
+        jPnlMain.add(jBtnShowAllCrs, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 200, -1, -1));
+
+        jTblCarAdd.setBackground(new java.awt.Color(62, 62, 62));
+        jTblCarAdd.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jTblCarAdd.setForeground(new java.awt.Color(255, 255, 255));
+        jTblCarAdd.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "REG", "VIN", "MAKE", "MODEL", "Mileage", "type", "fueling", "gearbox", "drivetrain", "CC", "POWER"
+            }
+        ));
+        jTblCarAdd.getTableHeader().setReorderingAllowed(false);
+        jTblCarAdd.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTblCarAddMouseClicked(evt);
+            }
+        });
+        jTblCarAdd.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTblCarAddKeyReleased(evt);
+            }
+        });
+        jScrollPane1.setViewportView(jTblCarAdd);
+
+        jPnlMain.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 20, 810, 510));
+
+        jLblMainImage.setBackground(new java.awt.Color(62, 62, 62));
+        jLblMainImage.setForeground(new java.awt.Color(255, 255, 255));
+        jLblMainImage.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/Aqua Marine.jpg"))); // NOI18N
+        jPnlMain.add(jLblMainImage, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 1060, 530));
+
+        jFrmCarAdd.getContentPane().add(jPnlMain, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 1080, 550));
+
+        jPnlTopCarrAdd.setBackground(new java.awt.Color(51, 51, 51));
+        jPnlTopCarrAdd.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLblTopOfCAddClose.setBackground(new java.awt.Color(255, 0, 51));
+        jLblTopOfCAddClose.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLblTopOfCAddClose.setForeground(new java.awt.Color(255, 255, 255));
+        jLblTopOfCAddClose.setText("  x");
+        jLblTopOfCAddClose.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
+        jLblTopOfCAddClose.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLblTopOfCAddCloseMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLblTopOfCAddCloseMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jLblTopOfCAddCloseMouseExited(evt);
+            }
+        });
+        jPnlTopCarrAdd.add(jLblTopOfCAddClose, new org.netbeans.lib.awtextra.AbsoluteConstraints(1050, 0, 30, 30));
+
+        jLblTopOfCAddMin.setBackground(new java.awt.Color(153, 153, 153));
+        jLblTopOfCAddMin.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLblTopOfCAddMin.setForeground(new java.awt.Color(255, 255, 255));
+        jLblTopOfCAddMin.setText("  -");
+        jLblTopOfCAddMin.setToolTipText("");
+        jLblTopOfCAddMin.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(255, 255, 255)));
+        jLblTopOfCAddMin.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLblTopOfCAddMinMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLblTopOfCAddMinMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jLblTopOfCAddMinMouseExited(evt);
+            }
+        });
+        jPnlTopCarrAdd.add(jLblTopOfCAddMin, new org.netbeans.lib.awtextra.AbsoluteConstraints(1020, 0, 30, 30));
+
+        jLblTopCarrAdd.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                jLblTopCarrAddMouseDragged(evt);
+            }
+        });
+        jLblTopCarrAdd.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLblTopCarrAddMouseClicked(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLblTopCarrAddMousePressed(evt);
+            }
+        });
+        jPnlTopCarrAdd.add(jLblTopCarrAdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1020, 30));
+
+        jFrmCarAdd.getContentPane().add(jPnlTopCarrAdd, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1080, 30));
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Client Information Manage");
+        setBackground(new java.awt.Color(52, 152, 219));
+        setUndecorated(true);
+        setResizable(false);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPnlALL.setBackground(new java.awt.Color(51, 0, 255));
+        jPnlALL.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jPnlTop.setBackground(new java.awt.Color(51, 51, 51));
+        jPnlTop.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel_minimizeClMan.setBackground(new java.awt.Color(153, 153, 153));
+        jLabel_minimizeClMan.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLabel_minimizeClMan.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel_minimizeClMan.setText("  -");
+        jLabel_minimizeClMan.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 255, 255)));
+        jLabel_minimizeClMan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel_minimizeClMan.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel_minimizeClManMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLabel_minimizeClManMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jLabel_minimizeClManMouseExited(evt);
+            }
+        });
+        jPnlTop.add(jLabel_minimizeClMan, new org.netbeans.lib.awtextra.AbsoluteConstraints(1380, 0, 30, 30));
+
+        jLbl_minClMan.setBackground(new java.awt.Color(255, 0, 51));
+        jLbl_minClMan.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLbl_minClMan.setForeground(new java.awt.Color(255, 255, 255));
+        jLbl_minClMan.setText("  X");
+        jLbl_minClMan.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 1, 1, 1, new java.awt.Color(255, 255, 255)));
+        jLbl_minClMan.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLbl_minClMan.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLbl_minClManMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                jLbl_minClManMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                jLbl_minClManMouseExited(evt);
+            }
+        });
+        jPnlTop.add(jLbl_minClMan, new org.netbeans.lib.awtextra.AbsoluteConstraints(1410, 0, 30, 30));
+
+        jLblTopClMan.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseDragged(java.awt.event.MouseEvent evt) {
+                jLblTopClManMouseDragged(evt);
+            }
+        });
+        jLblTopClMan.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLblTopClManMouseClicked(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jLblTopClManMousePressed(evt);
+            }
+        });
+        jPnlTop.add(jLblTopClMan, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1441, 31));
+
+        jLbl_clts.setFont(new java.awt.Font("Rockwell", 1, 24)); // NOI18N
+        jLbl_clts.setForeground(new java.awt.Color(255, 255, 255));
+        jLbl_clts.setText("Information about current clients :");
+        jPnlTop.add(jLbl_clts, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 0, 420, 23));
+
+        jPnlALL.add(jPnlTop, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, 37));
+
+        jPnl_ClinetManagement.setBackground(new java.awt.Color(0, 84, 140));
+        jPnl_ClinetManagement.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jTxtFld_ClientID.setEditable(false);
+        jTxtFld_ClientID.setBackground(new java.awt.Color(51, 153, 255));
+        jTxtFld_ClientID.setForeground(new java.awt.Color(255, 255, 255));
+        jTxtFld_ClientID.setFocusable(false);
+        jPnl_ClinetManagement.add(jTxtFld_ClientID, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 40, 170, -1));
+
+        jTxtFld_ClientName.setBackground(new java.awt.Color(62, 62, 62));
+        jTxtFld_ClientName.setForeground(new java.awt.Color(255, 255, 255));
+        jTxtFld_ClientName.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTxtFld_ClientNameKeyTyped(evt);
+            }
+        });
+        jPnl_ClinetManagement.add(jTxtFld_ClientName, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 90, 170, -1));
+
+        jTxtFld_ClientFName.setBackground(new java.awt.Color(62, 62, 62));
+        jTxtFld_ClientFName.setForeground(new java.awt.Color(255, 255, 255));
+        jTxtFld_ClientFName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTxtFld_ClientFNameActionPerformed(evt);
+            }
+        });
+        jTxtFld_ClientFName.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTxtFld_ClientFNameKeyTyped(evt);
+            }
+        });
+        jPnl_ClinetManagement.add(jTxtFld_ClientFName, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 120, 170, -1));
+
+        jTxtFld_ClientPhoneNum.setBackground(new java.awt.Color(62, 62, 62));
+        jTxtFld_ClientPhoneNum.setForeground(new java.awt.Color(255, 255, 255));
+        jTxtFld_ClientPhoneNum.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTxtFld_ClientPhoneNumKeyTyped(evt);
+            }
+        });
+        jPnl_ClinetManagement.add(jTxtFld_ClientPhoneNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 150, 170, -1));
+
+        jTxtFld_ClientPhoneNumAlt.setBackground(new java.awt.Color(62, 62, 62));
+        jTxtFld_ClientPhoneNumAlt.setForeground(new java.awt.Color(255, 255, 255));
+        jTxtFld_ClientPhoneNumAlt.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTxtFld_ClientPhoneNumAltKeyTyped(evt);
+            }
+        });
+        jPnl_ClinetManagement.add(jTxtFld_ClientPhoneNumAlt, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 180, 170, -1));
+
+        jTxtFld_ClientEmail.setBackground(new java.awt.Color(62, 62, 62));
+        jTxtFld_ClientEmail.setForeground(new java.awt.Color(255, 255, 255));
+        jTxtFld_ClientEmail.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTxtFld_ClientEmailKeyTyped(evt);
+            }
+        });
+        jPnl_ClinetManagement.add(jTxtFld_ClientEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 210, 170, -1));
+
+        jTxtFld_ClientEmailSecond.setBackground(new java.awt.Color(62, 62, 62));
+        jTxtFld_ClientEmailSecond.setForeground(new java.awt.Color(255, 255, 255));
+        jTxtFld_ClientEmailSecond.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTxtFld_ClientEmailSecondKeyTyped(evt);
+            }
+        });
+        jPnl_ClinetManagement.add(jTxtFld_ClientEmailSecond, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 240, 170, -1));
+
+        jBtnAddUserInTbl.setBackground(new java.awt.Color(0, 84, 140));
+        jBtnAddUserInTbl.setForeground(new java.awt.Color(255, 255, 255));
+        jBtnAddUserInTbl.setText("Add new client");
+        jBtnAddUserInTbl.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnAddUserInTblActionPerformed(evt);
+            }
+        });
+        jPnl_ClinetManagement.add(jBtnAddUserInTbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 280, 120, 30));
+
+        jBtnUpdateUserInTbl.setBackground(new java.awt.Color(0, 84, 140));
+        jBtnUpdateUserInTbl.setForeground(new java.awt.Color(255, 255, 255));
+        jBtnUpdateUserInTbl.setText("Update info");
+        jBtnUpdateUserInTbl.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnUpdateUserInTblActionPerformed(evt);
+            }
+        });
+        jPnl_ClinetManagement.add(jBtnUpdateUserInTbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 280, 140, 30));
+
+        jBtnDelUserInTbl.setBackground(new java.awt.Color(0, 84, 140));
+        jBtnDelUserInTbl.setForeground(new java.awt.Color(255, 255, 255));
+        jBtnDelUserInTbl.setText("Delete client ");
+        jBtnDelUserInTbl.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnDelUserInTblActionPerformed(evt);
+            }
+        });
+        jPnl_ClinetManagement.add(jBtnDelUserInTbl, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 320, 120, 30));
+
+        jBtnClear.setBackground(new java.awt.Color(0, 84, 140));
+        jBtnClear.setForeground(new java.awt.Color(255, 255, 255));
+        jBtnClear.setText("Clear");
+        jBtnClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnClearActionPerformed(evt);
+            }
+        });
+        jPnl_ClinetManagement.add(jBtnClear, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 360, 120, -1));
+
+        jBtb_AddNCar.setBackground(new java.awt.Color(0, 84, 140));
+        jBtb_AddNCar.setForeground(new java.awt.Color(255, 255, 255));
+        jBtb_AddNCar.setText("Add car");
+        jBtb_AddNCar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtb_AddNCarActionPerformed(evt);
+            }
+        });
+        jPnl_ClinetManagement.add(jBtb_AddNCar, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 410, 120, 30));
+
+        jBtnCarOwnChk.setBackground(new java.awt.Color(0, 84, 140));
+        jBtnCarOwnChk.setForeground(new java.awt.Color(255, 255, 255));
+        jBtnCarOwnChk.setText("Check owned cars");
+        jBtnCarOwnChk.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnCarOwnChkActionPerformed(evt);
+            }
+        });
+        jPnl_ClinetManagement.add(jBtnCarOwnChk, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 410, 140, 30));
+
+        jLblSearchBy.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jLblSearchBy.setForeground(new java.awt.Color(255, 255, 255));
+        jLblSearchBy.setText("Search Client by :");
+        jPnl_ClinetManagement.add(jLblSearchBy, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 450, -1, -1));
+
+        jCmbBxOrdrAscDsc.setBackground(new java.awt.Color(62, 62, 62));
+        jCmbBxOrdrAscDsc.setForeground(new java.awt.Color(255, 255, 255));
+        jCmbBxOrdrAscDsc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "ASCENDING", "DESCENDING" }));
+        jPnl_ClinetManagement.add(jCmbBxOrdrAscDsc, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 480, 110, -1));
+
+        jComBoxSearchClBy.setBackground(new java.awt.Color(62, 62, 62));
+        jComBoxSearchClBy.setForeground(new java.awt.Color(255, 255, 255));
+        jComBoxSearchClBy.setMaximumRowCount(4);
+        jComBoxSearchClBy.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Name", "Family name", "Phone Number", "Client ID Number" }));
+        jComBoxSearchClBy.setToolTipText("Chose Search by ;");
+        jPnl_ClinetManagement.add(jComBoxSearchClBy, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 480, 150, -1));
+
+        jTxtFld_Srch.setBackground(new java.awt.Color(62, 62, 62));
+        jTxtFld_Srch.setForeground(new java.awt.Color(255, 255, 255));
+        jTxtFld_Srch.setToolTipText("Seach in Clients ....");
+        jTxtFld_Srch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jTxtFld_SrchActionPerformed(evt);
+            }
+        });
+        jTxtFld_Srch.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTxtFld_SrchKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTxtFld_SrchKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTxtFld_SrchKeyTyped(evt);
+            }
+        });
+        jPnl_ClinetManagement.add(jTxtFld_Srch, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 520, 270, -1));
+
+        jBtnBack.setBackground(new java.awt.Color(0, 84, 140));
+        jBtnBack.setForeground(new java.awt.Color(255, 255, 255));
+        jBtnBack.setText("Back ");
+        jBtnBack.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jBtnBackActionPerformed(evt);
+            }
+        });
+        jPnl_ClinetManagement.add(jBtnBack, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 550, 135, 30));
+
+        jLbl_ClientID.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jLbl_ClientID.setForeground(new java.awt.Color(255, 255, 255));
+        jLbl_ClientID.setText("Client ID number :");
+        jPnl_ClinetManagement.add(jLbl_ClientID, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 50, 140, -1));
+
+        jLbl_ClientName.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jLbl_ClientName.setForeground(new java.awt.Color(255, 255, 255));
+        jLbl_ClientName.setText("Client name : *");
+        jPnl_ClinetManagement.add(jLbl_ClientName, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 90, 130, -1));
+
+        jLbl_ClientFName.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jLbl_ClientFName.setForeground(new java.awt.Color(255, 255, 255));
+        jLbl_ClientFName.setText("Family name : *");
+        jPnl_ClinetManagement.add(jLbl_ClientFName, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 120, 130, -1));
+
+        jLbl_ClientPhoneNum.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jLbl_ClientPhoneNum.setForeground(new java.awt.Color(255, 255, 255));
+        jLbl_ClientPhoneNum.setText("Phone number : *");
+        jPnl_ClinetManagement.add(jLbl_ClientPhoneNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 150, 130, -1));
+
+        jLblAltPhoneNum.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jLblAltPhoneNum.setForeground(new java.awt.Color(255, 255, 255));
+        jLblAltPhoneNum.setText("Alternative phone : ");
+        jPnl_ClinetManagement.add(jLblAltPhoneNum, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 180, 140, -1));
+
+        jLbl_ClientEmail.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jLbl_ClientEmail.setForeground(new java.awt.Color(255, 255, 255));
+        jLbl_ClientEmail.setText("E-mail : *");
+        jPnl_ClinetManagement.add(jLbl_ClientEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 210, 130, -1));
+
+        jLbl_ClientEmailSecond.setFont(new java.awt.Font("Arial", 1, 14)); // NOI18N
+        jLbl_ClientEmailSecond.setForeground(new java.awt.Color(255, 255, 255));
+        jLbl_ClientEmailSecond.setText("E-mail alternative  : ");
+        jPnl_ClinetManagement.add(jLbl_ClientEmailSecond, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 240, 150, -1));
+
+        jTblClients.setBackground(new java.awt.Color(62, 62, 62));
+        jTblClients.setFont(new java.awt.Font("Arial", 0, 12)); // NOI18N
+        jTblClients.setForeground(new java.awt.Color(255, 255, 255));
+        jTblClients.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jTblClients.setName(""); // NOI18N
+        jTblClients.setShowGrid(false);
+        jTblClients.getTableHeader().setReorderingAllowed(false);
+        jTblClients.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                jTblClientsFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                jTblClientsFocusLost(evt);
+            }
+        });
+        jTblClients.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTblClientsMouseClicked(evt);
+            }
+        });
+        jTblClients.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jTblClientsKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTblClientsKeyReleased(evt);
+            }
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                jTblClientsKeyTyped(evt);
+            }
+        });
+        jScrollPane2.setViewportView(jTblClients);
+
+        jPnl_ClinetManagement.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 40, 1030, 500));
+
+        jPnlPaging.setBackground(new java.awt.Color(62, 62, 62));
+        jPnlPaging.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jButtonLast.setBackground(new java.awt.Color(0, 84, 140));
+        jButtonLast.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jButtonLast.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonLast.setText("Last");
+        jButtonLast.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonLastActionPerformed(evt);
+            }
+        });
+        jPnlPaging.add(jButtonLast, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 0, 90, -1));
+
+        jButtonNext.setBackground(new java.awt.Color(0, 84, 140));
+        jButtonNext.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jButtonNext.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonNext.setText("Next");
+        jButtonNext.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonNextActionPerformed(evt);
+            }
+        });
+        jPnlPaging.add(jButtonNext, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 0, 70, -1));
+
+        jComboBoxPage.setBackground(new java.awt.Color(62, 62, 62));
+        jComboBoxPage.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jComboBoxPage.setForeground(new java.awt.Color(255, 255, 255));
+        jPnlPaging.add(jComboBoxPage, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 0, 80, 30));
+
+        jButtonPrevious.setBackground(new java.awt.Color(0, 84, 140));
+        jButtonPrevious.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jButtonPrevious.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonPrevious.setText("Previous");
+        jButtonPrevious.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonPreviousActionPerformed(evt);
+            }
+        });
+        jPnlPaging.add(jButtonPrevious, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 0, -1, -1));
+
+        jButtonFirst.setBackground(new java.awt.Color(0, 84, 140));
+        jButtonFirst.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jButtonFirst.setForeground(new java.awt.Color(255, 255, 255));
+        jButtonFirst.setText("First");
+        jButtonFirst.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonFirstActionPerformed(evt);
+            }
+        });
+        jPnlPaging.add(jButtonFirst, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 0, 90, -1));
+
+        jLabelStatusHalaman.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jLabelStatusHalaman.setForeground(new java.awt.Color(255, 255, 255));
+        jPnlPaging.add(jLabelStatusHalaman, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 0, 240, 40));
+
+        jLabelTotalData.setFont(new java.awt.Font("Arial", 1, 12)); // NOI18N
+        jLabelTotalData.setForeground(new java.awt.Color(255, 255, 255));
+        jLabelTotalData.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jPnlPaging.add(jLabelTotalData, new org.netbeans.lib.awtextra.AbsoluteConstraints(770, 0, 200, 40));
+
+        jPnl_ClinetManagement.add(jPnlPaging, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 540, 1030, 40));
+
+        jLblPIC.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Icons/CLINF.png"))); // NOI18N
+        jPnl_ClinetManagement.add(jLblPIC, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 1420, 600));
+
+        jPnlALL.add(jPnl_ClinetManagement, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 30, 1440, 620));
+
+        getContentPane().add(jPnlALL, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1440, 650));
+
+        setSize(new java.awt.Dimension(1437, 691));
+        setLocationRelativeTo(null);
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void jBtnBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnBackActionPerformed
+        //Button back disposes of the form
+        this.dispose();
+    }//GEN-LAST:event_jBtnBackActionPerformed
+
+    private void jTxtFld_ClientPhoneNumKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtFld_ClientPhoneNumKeyTyped
+        //Filter for client phone length and digits only
+        if (!Character.isDigit(evt.getKeyChar()) || (jTxtFld_ClientPhoneNum.getText() + evt.getKeyChar()).length() > 10) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_jTxtFld_ClientPhoneNumKeyTyped
+
+    private void jTxtFld_ClientEmailKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtFld_ClientEmailKeyTyped
+        //Filter for client email charecter length
+        if ((jTxtFld_ClientEmail.getText() + evt.getKeyChar()).length() > 64) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_jTxtFld_ClientEmailKeyTyped
+
+    private void jTxtFld_ClientFNameKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtFld_ClientFNameKeyTyped
+        //Filter for client family name charecter length
+        if (!Character.isAlphabetic(evt.getKeyChar()) || (jTxtFld_ClientFName.getText() + evt.getKeyChar()).length() > 32) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_jTxtFld_ClientFNameKeyTyped
+
+    private void jTxtFld_ClientNameKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtFld_ClientNameKeyTyped
+        //Filter for client  name charecter length
+        if (!Character.isAlphabetic(evt.getKeyChar()) || (jTxtFld_ClientName.getText() + evt.getKeyChar()).length() > 32) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_jTxtFld_ClientNameKeyTyped
+
+    private void jTxtFld_SrchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtFld_SrchKeyReleased
+       //Search feature 
+        srch();
+    }//GEN-LAST:event_jTxtFld_SrchKeyReleased
+
+    private void jTxtFld_SrchKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtFld_SrchKeyTyped
+
+    }//GEN-LAST:event_jTxtFld_SrchKeyTyped
+
+    private void jBtnUpdateUserInTblActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnUpdateUserInTblActionPerformed
+        //Button Updates client information    
+        ClientsTableModel model = (ClientsTableModel) jTblClients.getModel();//Gets table model for clients table
+
+        if (verifyClientFields()) {//Verifies if the fields are not empty
+            if (model.getRowCount() != 0) {//Checks if row count is not zero 
+                //Get current date and time
+                DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+                LocalDateTime now = LocalDateTime.now();
+                //Checks if email of the client is valid
+                if (EmailValidUtil.getEmailVer(jTxtFld_ClientEmail.getText()) || EmailValidUtil.getEmailVer(jTxtFld_ClientEmailSecond.getText())) {
+                    //Checks if the phone number of the client is valid
+                    if (PhoneNumberVerifif.getPhoneNumberVer(jTxtFld_ClientPhoneNum.getText()) || PhoneNumberVerifif.getPhoneNumberVer(jTxtFld_ClientPhoneNumAlt.getText())) {
+                        int result;
+                        result = JOptionPane.showConfirmDialog(this, "Are you sure you really want to Update client  information  for client  " + jTxtFld_ClientName.getText() + " " + jTxtFld_ClientFName.getText(),
+                                " Update operation ! ", 1);
+                        System.out.println(result);
+                        // yes -> 0
+                        // no ->  1
+                        // cancel  -> 2
+                        if (result == 0) {
+                            //SQL Query for update
+                            String query = "UPDATE `clientdetails` SET `fname`='" + jTxtFld_ClientName.getText() + "',"
+                                    + " `alt_Phn_Num` = '" + jTxtFld_ClientPhoneNumAlt.getText() + "',"
+                                    + "`clients_Date_T_LastTModified`='" + dtf.format(now).toString() + "',"
+                                    + "`clients_second_email` = '" + jTxtFld_ClientEmailSecond.getText() + "',"
+                                    + "`lname`='" + jTxtFld_ClientFName.getText() + "',"
+                                    + "`clients_email` = '" + jTxtFld_ClientEmail.getText() + "',"
+                                    + "`Phn_Num`=" + jTxtFld_ClientPhoneNum.getText() + " WHERE `clientdetails`.`id` = " + jTxtFld_ClientID.getText();
+                            executeSQlQuery(query, "Updated");
+                        }
+                    }//Validates clients phone number
+                }//Validates clients email addres
+            }//Checks if row count is not zero 
+        }//Verifies if the fields are not empty
+    }//GEN-LAST:event_jBtnUpdateUserInTblActionPerformed
+
+    private void jBtnDelUserInTblActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnDelUserInTblActionPerformed
+       // Deletes selected client
+        //Gets client table model
+        ClientsTableModel model = (ClientsTableModel) jTblClients.getModel();
+        if (verifyClientFields() && model.getRowCount() != 0) {//Verifies if the textfields are not empty and that the row count is not zero
+            int result;
+            result = JOptionPane.showConfirmDialog(this, "Are you sure you really want to delete the record for user  " + jTxtFld_ClientName.getText(),
+                    " Delete operation ! ", 1);
+            System.out.println(result);
+            // yes -> 0
+            // no ->  1
+            // cancel  -> 2
+            if (result == 0) {
+                String dell;
+                dell = JOptionPane.showInputDialog(this, "Type DELETE if you want to erase the record : ", "");
+                if ("DELETE".equals(dell) && !jTxtFld_ClientName.getText().trim().equals("".trim())) { // check if input iz null
+
+                    String query = "DELETE FROM `clientdetails` WHERE id = " + jTxtFld_ClientID.getText();
+                    executeSQlQuery(query, "Deleted");
+                    resetsClientTxtFields();
+                } else {// no input oem check if empty
+                    JOptionPane.showMessageDialog(null, " Record for user Not deleted !   ", " Deletion  ", 2);
+                }
+            }
+        }//Verifies if the textfields are not empty and that the row count is not zero
+    }//GEN-LAST:event_jBtnDelUserInTblActionPerformed
+
+    private void jBtnAddUserInTblActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnAddUserInTblActionPerformed
+        //Button Add new client to table
+        if (!checkClPhoneNum(jTxtFld_ClientPhoneNum.getText())) { //check if user with such phone number alredy exists
+            //Verifies if the phone number is valid
+            if (PhoneNumberVerifif.getPhoneNumberVer(jTxtFld_ClientPhoneNum.getText()) || PhoneNumberVerifif.getPhoneNumberVer(jTxtFld_ClientPhoneNumAlt.getText())) {
+                //Verifies if the email is valid
+                if (EmailValidUtil.getEmailVer(jTxtFld_ClientEmail.getText()) || EmailValidUtil.getEmailVer(jTxtFld_ClientEmailSecond.getText())) {
+                    if (verifyClientFields()) {//Validates that textfields are not empty
+
+                        try {
+                            //SQL Query 
+                            PreparedStatement ps = connct.prepareStatement("insert into clientdetails"
+                                    + "(fname,lname,Phn_Num,alt_Phn_Num,clients_email,clients_second_email,dateTime_Cl_created) values (?,?,?,?,?,?,?)");
+                            ps.setString(1, jTxtFld_ClientName.getText());//First name 
+                            ps.setString(2, jTxtFld_ClientFName.getText());//Family name 
+                            ps.setString(3, jTxtFld_ClientPhoneNum.getText());//Phone number
+                            ps.setString(4, jTxtFld_ClientPhoneNumAlt.getText());//Phone number 2 
+                            ps.setString(5, jTxtFld_ClientEmail.getText());//Email
+                            ps.setString(6, jTxtFld_ClientEmailSecond.getText());//Email 2
+                            // Gets local date time from the computer
+                            DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+                            LocalDateTime now = LocalDateTime.now();
+                            ps.setString(7, dtf.format(now));//Date time from local machine 
+                            int res = ps.executeUpdate();//Executes the Query
+
+                            initPagination();//Update jtable rows
+
+                            if (res >= 1) {//Successful update
+                                JOptionPane.showMessageDialog(null, res + " Number of Clients"
+                                        + " inserted into database ....");
+                            } else {//Failed update
+                                JOptionPane.showMessageDialog(null, "Clients Insertion Failed ... ");
+                            }
+                        } catch (Exception e) {
+                            JOptionPane.showMessageDialog(null, e);
+                        }
+                        resetsClientTxtFields();//Clean textfields
+                    } else {
+                        JOptionPane.showMessageDialog(null, "All fields are compulsory ... ", "Empty fields ! ", 2);
+                    }
+                } else {//Email invalid
+                    JOptionPane.showMessageDialog(null, "Please enter a valid email ", "Email adress not found ! ", 2);
+                }
+            } else {//Phone number invalid
+                JOptionPane.showMessageDialog(null, " Please enter vald phone number  ", "Phone number not valid ! ", 2);
+            }
+        }//check if user with such phone number alredy exists
+    }//GEN-LAST:event_jBtnAddUserInTblActionPerformed
+
+
+    private void jTblClientsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTblClientsMouseClicked
+        //Show cliaent information from the jtable to the correct  textfield
+        showClientsToFields();
+    }//GEN-LAST:event_jTblClientsMouseClicked
+
+    private void jTxtFld_ClientFNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTxtFld_ClientFNameActionPerformed
+
+    }//GEN-LAST:event_jTxtFld_ClientFNameActionPerformed
+
+    private void jTxtFld_ClientEmailSecondKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtFld_ClientEmailSecondKeyTyped
+        //Filter for Email client input length
+        if ((jTxtFld_ClientEmailSecond.getText() + evt.getKeyChar()).length() > 64) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_jTxtFld_ClientEmailSecondKeyTyped
+
+    private void jTxtFld_ClientPhoneNumAltKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtFld_ClientPhoneNumAltKeyTyped
+        // Filter for alternative phone number client input lenth
+        if (!Character.isDigit(evt.getKeyChar()) || (jTxtFld_ClientPhoneNumAlt.getText() + evt.getKeyChar()).length() > 10) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_jTxtFld_ClientPhoneNumAltKeyTyped
+
+    private void jTblClientsKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTblClientsKeyTyped
+
+    }//GEN-LAST:event_jTblClientsKeyTyped
+
+    private void jTblClientsKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTblClientsKeyReleased
+       //Key press events
+        //Show celecter rows info to textfields navigate with arrow up adn down
+        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            //Shows usr info in textfields
+            showClientsToFields();
+        }
+        if (evt.getKeyCode() == KeyEvent.VK_DELETE) {//On Delete key pressed
+            // Deletes selected client
+            //Gets client table model
+            ClientsTableModel model = (ClientsTableModel) jTblClients.getModel();
+            if (verifyClientFields() && model.getRowCount() != 0) {//Verifies if the textfields are not empty and that the row count is not zero
+                int result;
+                result = JOptionPane.showConfirmDialog(this, "Are you sure you really want to delete the record for user  " + jTxtFld_ClientName.getText(),
+                        " Delete operation ! ", 1);
+                System.out.println(result);
+                // yes -> 0
+                // no ->  1
+                // cancel  -> 2
+                if (result == 0) {
+                    String dell;
+                    dell = JOptionPane.showInputDialog(this, "Type DELETE if you want to erase the record : ", "");
+                    if ("DELETE".equals(dell) && !jTxtFld_ClientName.getText().trim().equals("".trim())) { // check if input iz null
+
+                        String query = "DELETE FROM `clientdetails` WHERE id = " + jTxtFld_ClientID.getText();
+                        executeSQlQuery(query, "Deleted");
+                        resetsClientTxtFields();
+                    } else {// no input oem check if empty
+                        JOptionPane.showMessageDialog(null, " Record for user Not deleted !   ", " Deletion  ", 2);
+                    }
+                }
+            }//Verifies if the textfields are not empty and that the row count is not zero
+        }//On delete ky pressed
+    }//GEN-LAST:event_jTblClientsKeyReleased
+
+    private void jTblClientsKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTblClientsKeyPressed
+
+
+    }//GEN-LAST:event_jTblClientsKeyPressed
+
+    private void jTblClientsFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTblClientsFocusLost
+
+
+    }//GEN-LAST:event_jTblClientsFocusLost
+
+    private void jTblClientsFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTblClientsFocusGained
+
+
+    }//GEN-LAST:event_jTblClientsFocusGained
+
+    private void jTxtFld_SrchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTxtFld_SrchActionPerformed
+
+    }//GEN-LAST:event_jTxtFld_SrchActionPerformed
+
+    private void jLabel_minimizeClManMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_minimizeClManMouseClicked
+        // Minimize client management window
+        this.setState(JFrameClientManagement.ICONIFIED);
+    }//GEN-LAST:event_jLabel_minimizeClManMouseClicked
+
+    private void jLabel_minimizeClManMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_minimizeClManMouseEntered
+        // Minimize client management window mouse entered
+        Border label_border = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray);
+        jLabel_minimizeClMan.setBorder(label_border);
+        jLabel_minimizeClMan.setForeground(Color.gray);
+        jLabel_minimizeClMan.setOpaque(true);
+        jLbl_minClMan.setBackground(new Color(153, 153, 153));
+
+    }//GEN-LAST:event_jLabel_minimizeClManMouseEntered
+
+    private void jLabel_minimizeClManMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel_minimizeClManMouseExited
+        // Minimize client management window mouse exited
+        Border label_border = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.white);
+        jLabel_minimizeClMan.setBorder(label_border);
+        jLabel_minimizeClMan.setForeground(Color.white);
+        jLabel_minimizeClMan.setOpaque(false);
+    }//GEN-LAST:event_jLabel_minimizeClManMouseExited
+
+    private void jLbl_minClManMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLbl_minClManMouseClicked
+       //Close client management window by disposing
+        this.dispose();
+    }//GEN-LAST:event_jLbl_minClManMouseClicked
+
+    private void jLbl_minClManMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLbl_minClManMouseEntered
+     //Label minimize mouse entered change clolor
+        Border label_border = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray);
+        jLbl_minClMan.setBorder(label_border);
+        jLbl_minClMan.setForeground(Color.gray);
+        jLbl_minClMan.setOpaque(true);
+        jLbl_minClMan.setBackground(Color.RED);
+    }//GEN-LAST:event_jLbl_minClManMouseEntered
+
+    private void jLbl_minClManMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLbl_minClManMouseExited
+       //Label close mouse exited reset defaut color
+        Border label_border = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.white);
+        jLbl_minClMan.setBorder(label_border);
+        jLbl_minClMan.setForeground(Color.white);
+        jLbl_minClMan.setOpaque(false);
+
+    }//GEN-LAST:event_jLbl_minClManMouseExited
+
+    private void jBtb_AddNCarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtb_AddNCarActionPerformed
+        // Assing client to a car/s
+        if (verifyClientFields()) {//Verify if the fields are not empty
+            if (!jTxtFld_ClientID.getText().equals("")) {//Verifies that client is selected from the table
+                //Initializes frames panel for adding cars
+                jFrmCarAdd.setVisible(true);
+                jFrmCarAdd.setTitle("Cars ");
+                jFrmCarAdd.setResizable(false);
+                jFrmCarAdd.setSize(1081, 581);
+                jFrmCarAdd.setLocationRelativeTo(this);
+                jFrmCarAdd.setBackground(new Color(0, 0, 0, 0));
+
+                ArrayList<Cars_Db_clients> list = null;
+                list = new ArrayList<Cars_Db_clients>();
+                try {
+                    //SQL Query for car add
+                    String qry = "SELECT * FROM `clients_cars_record` WHERE `cl_Owner_car` IS NULL ORDER BY `cl_Owner_car` ASC";
+                    Statement st = connct.createStatement();
+                    ResultSet rs = st.executeQuery(qry);
+                    Cars_Db_clients cars_Db_clients;
+                    while (rs.next()) {
+                        cars_Db_clients = new Cars_Db_clients(rs.getString("Car_Reg_Num_cl"), rs.getString("Car_Vin_Num_cl"),
+                                rs.getString("Car_Make_cl"), rs.getString("Car_Model_cl"), rs.getString("Car_Mileage_cl"),
+                                rs.getString("Car_VehicleType_cl"), rs.getString("Car_FuelSys_cl"), rs.getString("Car_Gearbox_cl"),
+                                rs.getString("Car_ManufactureDate_cl"), rs.getString("Car_Drivetrain_cl"),
+                                rs.getString("Car_EngineDisplacementl_cl"), rs.getString("Car_Power_cl"), rs.getString("Car_DateTime_Created_cl"));
+                        list.add(cars_Db_clients);
+                    }
+                    //Gets defaut table model
+                    DefaultTableModel model = (DefaultTableModel) jTblCarAdd.getModel();
+                    model.setRowCount(0); // Empty/clear the table by setting table rows to zero
+                    Object[] row = new Object[11];
+                    for (int i = 0; i < list.size(); i++) {
+                        row[0] = list.get(i).getregNum();
+                        row[1] = list.get(i).getVIN();
+                        row[2] = list.get(i).getMake();
+                        row[3] = list.get(i).getModel();
+                        row[4] = list.get(i).getMileage();
+                        row[5] = list.get(i).getType();
+                        row[6] = list.get(i).getFueling();
+                        row[7] = list.get(i).getGearbox();
+                        row[8] = list.get(i).getDrivtrn();
+                        row[9] = list.get(i).getCC();
+                        row[10] = list.get(i).getKW();
+                        //Add rows to table
+                        model.addRow(row);
+                    }
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+            } else {//Verifies that client is selected
+                JOptionPane.showMessageDialog(this, " Customer not selected. Please chose customer from the table ! ", "Customer not selected ! ", 2);
+            }
+        }//Verify if the fields are not empty
+    }//GEN-LAST:event_jBtb_AddNCarActionPerformed
+
+    private void jLblTopClManMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLblTopClManMouseDragged
+        // Window drag feature
+        int coordX = evt.getXOnScreen();
+        int coordY = evt.getYOnScreen();
+        this.setLocation(coordX - xMouse, coordY - yMouse);
+    }//GEN-LAST:event_jLblTopClManMouseDragged
+
+    private void jLblTopClManMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLblTopClManMousePressed
+        // Window drag feature on click 
+        xMouse = evt.getX();
+        yMouse = evt.getY();
+    }//GEN-LAST:event_jLblTopClManMousePressed
+
+    private void jBtnCarAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCarAddActionPerformed
+        // Add car to customer Button in the form
+        //Gets client table model
+        ClientsTableModel model = (ClientsTableModel) jTblClients.getModel();
+        if (!jTxtFldRegNCA.getText().equals("".trim())) {//Checks if the car number is not null
+            if (model.getRowCount() != 0) {//checks if the rows are not zero
+                //
+                if (verifyClientFields()) {//Checks if the tehxtfields are not empty
+                    //SQL Update Query to set car to be owned by the client
+                    String query = "UPDATE `clients_cars_record` SET  `cl_Owner_car` = '" + jTxtFld_ClientID.getText() + "' WHERE `clients_cars_record`.`Car_Reg_Num_cl` = '" + jTxtFldRegNCA.getText() + "' ";
+                    executeSQlQuery(query, "Updated");
+                    //SQL Update Query to set car owns to yes
+                    String query1 = "UPDATE `clientdetails` SET `client_owns_car` = 'YES' WHERE `clientdetails`.`id` = '" + jTxtFld_ClientID.getText() + "' ";
+                    executeSQlQuery(query1, "Updated");
+                    jFrmCarAdd.dispose();//Closes the form
+                    jTxtFldRegNCA.setText("");//Clears car number 
+                }//Checks if the tehxtfields are not empty
+            }//checks if the rows are not zero
+        }//Checks if the car number is not null
+    }//GEN-LAST:event_jBtnCarAddActionPerformed
+
+    private void jTblCarAddMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTblCarAddMouseClicked
+        //Table cars add registration number from the table to the textfield on mouse clicked over teh row
+        TableModel model = jTblCarAdd.getModel();//gets the teble model
+        int i = jTblCarAdd.getSelectedRow();//gets teh index of the selected row
+        //sets car registration number textfield based on the selected rows index
+        jTxtFldRegNCA.setText(model.getValueAt(i, 0).toString());
+    }//GEN-LAST:event_jTblCarAddMouseClicked
+
+    private void jTblCarAddKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTblCarAddKeyReleased
+        //Key events for the table
+        //Gets the table model
+        TableModel model = jTblCarAdd.getModel();
+        //On arrow key press up or down shows 
+        if (evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            //gets teh index of the selected row
+            int i = jTblCarAdd.getSelectedRow();
+            //sets car registration number textfield based on the selected rows index
+            jTxtFldRegNCA.setText(model.getValueAt(i, 0).toString());
+    }//GEN-LAST:event_jTblCarAddKeyReleased
+    }
+    private void jBtnCarOwnChkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnCarOwnChkActionPerformed
+        //Button Check who owns whitch car 
+        if (verifyClientFields()) {//verify if the fields are not empty
+            //Gets the defaut table model
+            DefaultTableModel model = (DefaultTableModel) jTb_Cars.getModel();
+            // ResizeForJTables.autoResizeColumn(jTb_Cars);//Resizes thetable for the cars
+            model.setRowCount(0);//Clears table rows by setting them to zero
+            jFrmClientCarCheck.setVisible(true);
+            jFrmClientCarCheck.setTitle("Cars");
+            jFrmClientCarCheck.setResizable(false);
+            jFrmClientCarCheck.setSize(1920, 592);
+            jFrmClientCarCheck.setLocationRelativeTo(null);
+            jFrmClientCarCheck.setBackground(new Color(0, 0, 0, 0));
+            jTxtClId.setText(jTxtFld_ClientID.getText());
+            jTxtFldClName.setText(jTxtFld_ClientName.getText() + " " + jTxtFld_ClientFName.getText());
+
+            ArrayList<Cars_Db_clients> list = null;
+            list = new ArrayList<Cars_Db_clients>();
+            try {
+                String qry = "SELECT * FROM `clients_cars_record` WHERE  `cl_Owner_car` LIKE '" + jTxtClId.getText() + "' ORDER BY `cl_Owner_car` DESC ";
+                Statement st = connct.createStatement();
+                ResultSet rs = st.executeQuery(qry);
+                Cars_Db_clients cars_Db_clients;
+                while (rs.next()) {
+                    cars_Db_clients = new Cars_Db_clients(rs.getString("Car_Reg_Num_cl"), rs.getString("Car_Vin_Num_cl"),
+                            rs.getString("Car_Make_cl"), rs.getString("Car_Model_cl"), rs.getString("Car_Mileage_cl"),
+                            rs.getString("Car_VehicleType_cl"), rs.getString("Car_FuelSys_cl"), rs.getString("Car_Gearbox_cl"),
+                            rs.getString("Car_ManufactureDate_cl"), rs.getString("Car_Drivetrain_cl"),
+                            rs.getString("Car_EngineDisplacementl_cl"), rs.getString("Car_Power_cl"), rs.getString("Car_DateTime_Created_cl"));
+                    list.add(cars_Db_clients);
+                }
+                model.setRowCount(0); // Empty/clear the table
+                Object[] row = new Object[11];
+                for (int i = 0; i < list.size(); i++) {
+                    row[0] = list.get(i).getregNum();
+                    row[1] = list.get(i).getVIN();
+                    row[2] = list.get(i).getMake();
+                    row[3] = list.get(i).getModel();
+                    row[4] = list.get(i).getMileage();
+                    row[5] = list.get(i).getType();
+                    row[6] = list.get(i).getFueling();
+                    row[7] = list.get(i).getGearbox();
+                    row[8] = list.get(i).getDrivtrn();
+                    row[9] = list.get(i).getCC();
+                    row[10] = list.get(i).getKW();
+                    model.addRow(row);
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }//verify if the fields are not empty
+    }//GEN-LAST:event_jBtnCarOwnChkActionPerformed
+
+    private void jTb_CarsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTb_CarsMouseClicked
+
+    }//GEN-LAST:event_jTb_CarsMouseClicked
+
+    private void jTb_CarsKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTb_CarsKeyReleased
+
+    }//GEN-LAST:event_jTb_CarsKeyReleased
+
+    private void jLblTopCarrAddMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLblTopCarrAddMouseDragged
+        // Window drag feature
+        int coordX = evt.getXOnScreen();
+        int coordY = evt.getYOnScreen();
+        jFrmCarAdd.setLocation(coordX - xMouse, coordY - yMouse);
+    }//GEN-LAST:event_jLblTopCarrAddMouseDragged
+
+    private void jLblTopCarrAddMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLblTopCarrAddMouseClicked
+        // 2 Clicks centr  car chk Form
+        if (evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
+            //System.out.println("double clicked");
+            jFrmCarAdd.setLocationRelativeTo(null);
+        }
+    }//GEN-LAST:event_jLblTopCarrAddMouseClicked
+
+    private void jLblTopCarrAddMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLblTopCarrAddMousePressed
+        // Gets mouse cursor x y coordinates for drag feature
+        xMouse = evt.getX();
+        yMouse = evt.getY();
+    }//GEN-LAST:event_jLblTopCarrAddMousePressed
+
+    private void jLblTopOfCAddCloseMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLblTopOfCAddCloseMouseClicked
+        //Dispose on exit car add form
+        jFrmCarAdd.dispose();
+    }//GEN-LAST:event_jLblTopOfCAddCloseMouseClicked
+
+    private void jLblTopOfCAddMinMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLblTopOfCAddMinMouseClicked
+        //Minimize car add form
+        jFrmCarAdd.setState(JFrameClientManagement.ICONIFIED);
+    }//GEN-LAST:event_jLblTopOfCAddMinMouseClicked
+
+    private void jLblcCarChkMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLblcCarChkMouseClicked
+        // 2 Clicks centr  car chk Form
+        if (evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
+            //System.out.println("double clicked");
+            jFrmClientCarCheck.setLocationRelativeTo(null);
+        }
+    }//GEN-LAST:event_jLblcCarChkMouseClicked
+
+    private void jLblcCarChkMouseDragged(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLblcCarChkMouseDragged
+        //Top bar form drag mouse feature
+        int coordX = evt.getXOnScreen();
+        int coordY = evt.getYOnScreen();
+        jFrmClientCarCheck.setLocation(coordX - xMouse, coordY - yMouse);
+    }//GEN-LAST:event_jLblcCarChkMouseDragged
+
+    private void jLblcCarChkMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLblcCarChkMousePressed
+        //Frame drag feature get mouse cursor x y coordinates
+        xMouse = evt.getX();
+        yMouse = evt.getY();
+    }//GEN-LAST:event_jLblcCarChkMousePressed
+
+    private void jLvlCarChkMinMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLvlCarChkMinMouseClicked
+        //Minimize car ceck owner form
+        jFrmClientCarCheck.setState(JFrameClientManagement.ICONIFIED);
+    }//GEN-LAST:event_jLvlCarChkMinMouseClicked
+
+    private void jLblCarChkClsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLblCarChkClsMouseClicked
+        // Close adn disposes client owner check form
+        jFrmClientCarCheck.dispose();
+    }//GEN-LAST:event_jLblCarChkClsMouseClicked
+
+    private void jLblTopOfCAddMinMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLblTopOfCAddMinMouseEntered
+        // Top min entered mouse
+        Border label_border = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray);
+        jLblTopOfCAddMin.setBorder(label_border);
+        jLblTopOfCAddMin.setForeground(Color.gray);
+    }//GEN-LAST:event_jLblTopOfCAddMinMouseEntered
+
+    private void jLblTopOfCAddMinMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLblTopOfCAddMinMouseExited
+        // Top min entered exited
+        Border label_border = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.white);
+        jLblTopOfCAddMin.setBorder(label_border);
+        jLblTopOfCAddMin.setForeground(Color.white);
+    }//GEN-LAST:event_jLblTopOfCAddMinMouseExited
+
+    private void jLblTopOfCAddCloseMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLblTopOfCAddCloseMouseEntered
+        // Top exit entered mouse
+        Border label_border = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray);
+        jLblTopOfCAddClose.setBorder(label_border);
+        jLblTopOfCAddClose.setForeground(Color.gray);
+    }//GEN-LAST:event_jLblTopOfCAddCloseMouseEntered
+
+    private void jLblTopOfCAddCloseMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLblTopOfCAddCloseMouseExited
+        // Top exit exited mouse 
+        Border label_border = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.white);
+        jLblTopOfCAddClose.setBorder(label_border);
+        jLblTopOfCAddClose.setForeground(Color.white);
+    }//GEN-LAST:event_jLblTopOfCAddCloseMouseExited
+
+    private void jLblTopClManMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLblTopClManMouseClicked
+        // 2 Clicks centr Form
+        if (evt.getButton() == MouseEvent.BUTTON1 && evt.getClickCount() == 2) {
+            //System.out.println("double clicked");
+            this.setLocationRelativeTo(null);
+        }
+    }//GEN-LAST:event_jLblTopClManMouseClicked
+
+    private void jBtnShowAllCrsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnShowAllCrsActionPerformed
+//Button  
+//Gets defaut table model for the table
+        DefaultTableModel model = (DefaultTableModel) jTblCarAdd.getModel();
+        model.setRowCount(0);//Clears table rows by setting them to zero
+        Show_Users_In_JTableCars();//Fill the table
+        jTxtFldRegNCA.setText("");//Clears car reg number label
+    }//GEN-LAST:event_jBtnShowAllCrsActionPerformed
+
+    private void jLvlCarChkMinMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLvlCarChkMinMouseEntered
+        //Label minimize color on mouse entered set new color
+        Border label_border = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray);
+        jLvlCarChkMin.setBorder(label_border);
+        jLvlCarChkMin.setForeground(Color.gray);
+        jLvlCarChkMin.setOpaque(true);
+        jLvlCarChkMin.setBackground(new Color(153, 153, 153));
+    }//GEN-LAST:event_jLvlCarChkMinMouseEntered
+
+    private void jLvlCarChkMinMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLvlCarChkMinMouseExited
+       // Minimize client management window mouse exited set defaut color
+        Border label_border = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.white);
+        jLvlCarChkMin.setBorder(label_border);
+        jLvlCarChkMin.setForeground(Color.white);
+        jLvlCarChkMin.setOpaque(false);
+    }//GEN-LAST:event_jLvlCarChkMinMouseExited
+
+    private void jLblCarChkClsMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLblCarChkClsMouseEntered
+       //Label car check owner close mouse entered new label color
+        Border label_border = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.gray);
+        jLblCarChkCls.setBorder(label_border);
+        jLblCarChkCls.setForeground(Color.gray);
+        jLblCarChkCls.setOpaque(true);
+        jLblCarChkCls.setBackground(new Color(153, 153, 153));
+    }//GEN-LAST:event_jLblCarChkClsMouseEntered
+
+    private void jLblCarChkClsMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLblCarChkClsMouseExited
+       //Label car check owner close mouse exited set  defaut label color
+        Border label_border = BorderFactory.createMatteBorder(1, 1, 1, 1, Color.white);
+        jLblCarChkCls.setBorder(label_border);
+        jLblCarChkCls.setForeground(Color.white);
+        jLblCarChkCls.setOpaque(false);
+    }//GEN-LAST:event_jLblCarChkClsMouseExited
+
+    private void jButtonLastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLastActionPerformed
+       //Button page navigation last page
+        page = totalPage;
+        initPagination();//Update table rows with paging
+    }//GEN-LAST:event_jButtonLastActionPerformed
+
+    private void jButtonNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNextActionPerformed
+       //Button page navigation next page
+        if (page < totalPage) {
+            page++;//Page counter increment
+            initPagination();//Update table rows with paging
+        }
+    }//GEN-LAST:event_jButtonNextActionPerformed
+
+    private void jButtonPreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPreviousActionPerformed
+       //Button page navigation previous page
+        if (page > 1) {
+            page--;//Page counter decrement
+            initPagination();//Update table rows with paging
+        }
+    }//GEN-LAST:event_jButtonPreviousActionPerformed
+
+    private void jButtonFirstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFirstActionPerformed
+       //Button page navigation first page
+        page = 1;//Sets page counter to first page
+        initPagination();//Update table rows with paging
+    }//GEN-LAST:event_jButtonFirstActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+       //On client management form closing close connection to SQL DB 
+        try {
+            connct.close();//Close connetion
+            this.finalize();
+        } catch (Throwable ex) {
+            Logger.getLogger(JFrameClientCars.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_formWindowClosing
+
+    private void jTxtFld_SrchKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTxtFld_SrchKeyPressed
+
+    }//GEN-LAST:event_jTxtFld_SrchKeyPressed
+
+    private void jBtnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jBtnClearActionPerformed
+       //Clears textfields
+        resetsClientTxtFields();
+    }//GEN-LAST:event_jBtnClearActionPerformed
+
+    public boolean checkClPhoneNum(String ClPhone) {
+       //Function to check if the entred phone num already exists in the database
+        PreparedStatement st;
+        ResultSet rs;
+        boolean clPhoneNum_exist = false;
+        //SQL Query to get all phone number from the DB's table for client info
+        String query = "SELECT * FROM `clientdetails` WHERE `clientdetails`.`Phn_Num` = ?  ";
+        try {
+            st = connct.prepareStatement(query);
+            st.setString(1, ClPhone);
+            rs = st.executeQuery();
+            if (rs.next()) {
+                clPhoneNum_exist = true;
+                //Message if phonumber exists in the SQL DB
+                JOptionPane.showMessageDialog(null, "This   Phone number alredy exists", "Client Phone dublicate", 2);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(Register_Form.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return clPhoneNum_exist;
+    }
+
+    public boolean verifyClientFields() {
+        //Verifyes the if the fields are empty   
+        String ClientName = jTxtFld_ClientName.getText();//Client name 
+        String ClientFName = jTxtFld_ClientFName.getText();//Client family name
+        String ClientPhoneNum = jTxtFld_ClientPhoneNum.getText();//Clietn primary phone number
+        // check empty fields
+        if (ClientName.trim().equals("") || ClientFName.trim().equals("") || ClientPhoneNum.trim().equals("")) {
+            JOptionPane.showMessageDialog(null, "One Or More Fields Are Empty please fill up the manadatory fields", "Empty Fields", 2);
+            return false;
+        } // if everything is ok
+        else {
+            return true;
+        }
+    }
+
+    public ArrayList<Cars_Db_clients> getCARList() {
+        //Gets cars
+        ArrayList<Cars_Db_clients> carList = new ArrayList<Cars_Db_clients>();
+        //
+        String query = "SELECT * FROM  `clients_cars_record` ";
+        Statement st;
+        ResultSet rs;
+        try {
+            st = connct.createStatement();
+            rs = st.executeQuery(query);
+            Cars_Db_clients cars_Db_clients;
+            while (rs.next()) {
+                cars_Db_clients = new Cars_Db_clients(rs.getString("Car_Reg_Num_cl"), rs.getString("Car_Vin_Num_cl"),
+                        rs.getString("Car_Make_cl"), rs.getString("Car_Model_cl"), rs.getString("Car_Mileage_cl"),
+                        rs.getString("Car_VehicleType_cl"), rs.getString("Car_FuelSys_cl"), rs.getString("Car_Gearbox_cl"),
+                        rs.getString("Car_ManufactureDate_cl"), rs.getString("Car_Drivetrain_cl"), rs.getString("Car_EngineDisplacementl_cl"),
+                        rs.getString("Car_Power_cl"), rs.getString("Car_DateTime_Created_cl"));
+                carList.add(cars_Db_clients);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return carList;
+    }
+
+    public void Show_Users_In_JTableCars() {
+        // Display Data In JTable  
+        ArrayList<Cars_Db_clients> list = getCARList();
+        DefaultTableModel model = (DefaultTableModel) jTblCarAdd.getModel();
+        Object[] row = new Object[11];
+        for (int i = 0; i < list.size(); i++) {
+            row[0] = list.get(i).getregNum();
+            row[1] = list.get(i).getVIN();
+            row[2] = list.get(i).getMake();
+            row[3] = list.get(i).getModel();
+            row[4] = list.get(i).getMileage();
+            row[5] = list.get(i).getType();
+            row[6] = list.get(i).getFueling();
+            row[7] = list.get(i).getGearbox();
+            row[8] = list.get(i).getDrivtrn();
+            row[9] = list.get(i).getCC();
+            row[10] = list.get(i).getKW();
+            model.addRow(row);
+        }
+    }
+
+    public void executeSQlQuery(String query, String message) {
+        // Execute The Insert Update And Delete Querys
+        Statement st;
+        try {
+            st = connct.createStatement();
+            if ((st.executeUpdate(query)) == 1) {
+
+                initPagination();//Update table with paging
+                //Success message
+                JOptionPane.showMessageDialog(null, "Data " + message + " Succefully");
+            } else {//Fail
+                JOptionPane.showMessageDialog(null, "Data Not " + message);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public void showClientsToFields() {
+        //Sets textfields to table clients info 
+        //Gets table clients model
+        ClientsTableModel model = (ClientsTableModel) jTblClients.getModel();
+        //Gets index of the selelcted row from the table for clients 
+        int index = jTblClients.getSelectedRow();
+        //Sets textfields according t oselected rows index
+        jTxtFld_ClientID.setText(model.getValueAt(index, 1).toString());
+        jTxtFld_ClientName.setText(model.getValueAt(index, 2).toString());
+        jTxtFld_ClientFName.setText(model.getValueAt(index, 3).toString());
+        jTxtFld_ClientPhoneNum.setText(model.getValueAt(index, 4).toString());
+        jTxtFld_ClientPhoneNumAlt.setText(model.getValueAt(index, 5).toString());
+        jTxtFld_ClientEmail.setText(model.getValueAt(index, 6).toString());
+        jTxtFld_ClientEmailSecond.setText(model.getValueAt(index, 7).toString());
+    }
+
+    private void srch() {
+        //Searc with paging for jtable
+        //Gets total rows count form SQL DB 
+        totalData = count();
+        //Testing 
+        System.out.println(totalData);
+
+        rowCountPerPage = Integer.valueOf(jComboBoxPage.getSelectedItem().toString());
+        Double totalPageD = Math.ceil(totalData.doubleValue() / rowCountPerPage.doubleValue());
+        totalPage = totalPageD.intValue();
+        //Buttons for page navigation
+        //Button first paage previous page
+        if (page.equals(1)) {
+            jButtonFirst.setEnabled(false);
+            jButtonPrevious.setEnabled(false);
+        } else {
+            jButtonFirst.setEnabled(true);
+            jButtonPrevious.setEnabled(true);
+        }
+        //Button first next page last  page
+        if (page.equals(totalPage)) {
+            jButtonLast.setEnabled(false);
+            jButtonNext.setEnabled(false);
+        } else {
+            jButtonLast.setEnabled(true);
+            jButtonNext.setEnabled(true);
+        }
+
+        if (page > totalPage) {
+            page = 1;//Page first
+        }
+        //New instance of clietns talble model
+        productTableModel = new ClientsTableModel();
+        //Pages table
+        productTableModel.setList(srchT(page, rowCountPerPage));
+        //Sets clietn table model
+        jTblClients.setModel(productTableModel);
+        jLabelStatusHalaman.setText("Page " + page + " for " + totalPage);//Page position
+        jLabelTotalData.setText(("Row count " + totalData));//Table total rows count
+        //Resizes jtable columns
+        ResizeForJTables.autoResizeColumn(jTblClients);
+    }
+
+    public void resetsClientTxtFields() {
+        //Clears texfields for client info
+        jTxtFld_ClientID.setText("");
+        jTxtFld_ClientName.setText("");
+        jTxtFld_ClientFName.setText("");
+        jTxtFld_ClientPhoneNum.setText("");
+        jTxtFld_ClientPhoneNumAlt.setText("");
+        jTxtFld_ClientEmail.setText("");
+        jTxtFld_ClientEmailSecond.setText("");
+    }
+
+    public List<User> findAll(int page, int pageSize) {
+        //Table rows paging
+        List<User> listProduct = new ArrayList<User>();
+
+        if (count() == 0) {
+            return listProduct;
+        }
+
+        try {
+            connct.setAutoCommit(false);
+            //SQL DB Query for table paging
+            preparedStatement = connct.prepareStatement("SELECT * FROM clientdetails limit ?,?");
+            preparedStatement.setInt(1, pageSize * (page - 1));
+            preparedStatement.setInt(2, pageSize);
+            ResultSet rs = preparedStatement.executeQuery();
+            User user;
+            while (rs.next()) {
+                user = new User(rs.getInt("id"), rs.getString("fname"), rs.getString("lname"),
+                        rs.getString("Phn_Num"), rs.getString("alt_Phn_Num"), rs.getString("clients_email"),
+                        rs.getString("clients_second_email"), rs.getString("dateTime_Cl_created"), rs.getString("client_Mod_count"),
+                        rs.getString("clients_Date_T_LastTModified"));
+                listProduct.add(user);
+            }
+            connct.commit();
+            connct.setAutoCommit(true);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            return listProduct;
+        }
+    }
+
+    public int count() {
+        //Counts SQL table all rows 
+        int counter = 0;
+        try {
+            connct.setAutoCommit(false);
+            preparedStatement = connct.prepareStatement("SELECT count(id) from clientdetails");
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                counter = rs.getInt("count(id)");
+            }
+            connct.commit();
+            connct.setAutoCommit(true);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            return counter;
+        }
+    }
+
+    public List<User> srchT(int page, int pageSize) {
+//Search with paging cleints
+        List<User> listProduct = new ArrayList<User>();
+//Sort serch results by order
+        int b = jCmbBxOrdrAscDsc.getSelectedIndex();
+        String sort = "";//
+
+        switch (b) {//Switch for search order
+            case 0:
+                sort = "ASC";//Ascending order
+                break;
+            case 1:
+                sort = "DESC";//Descending order
+                break;
+
+            default:
+                sort = "ASC";//Defaut ascending order
+                break;
+        }
+//Search result by item
+        String test = "";
+        int a = jComBoxSearchClBy.getSelectedIndex();
+        switch (a) {//switch for search combobox states
+            case 0:
+                test = "fname";//First name of client
+                break;
+            case 1:
+                test = "lname";//Family name of client
+                break;
+            case 2:
+                test = "Phn_Num";//Clietn phone number
+                break;
+            case 3:
+                test = "id";//Client id
+                break;
+            default:
+                test = "id";//Defaut state search by clietn id
+                break;
+        }
+
+        if (count() == 0) {
+            return listProduct;
+        }
+
+        try {
+            connct.setAutoCommit(false);
+            String val = jTxtFld_Srch.getText();
+            //SQL Query for search
+            preparedStatement = connct.prepareStatement("SELECT * FROM clientdetails WHERE " + test + " like '%" + val + "%' ORDER BY " + test + " " + sort + " limit ?,?");
+            preparedStatement.setInt(1, pageSize * (page - 1));
+            preparedStatement.setInt(2, pageSize);
+            ResultSet rs = preparedStatement.executeQuery();
+            User user;
+            while (rs.next()) {
+                user = new User(rs.getInt("id"), rs.getString("fname"), rs.getString("lname"),
+                        rs.getString("Phn_Num"), rs.getString("alt_Phn_Num"), rs.getString("clients_email"),
+                        rs.getString("clients_second_email"), rs.getString("dateTime_Cl_created"), rs.getString("client_Mod_count"),
+                        rs.getString("clients_Date_T_LastTModified"));
+                listProduct.add(user);
+            }
+            connct.commit();
+            connct.setAutoCommit(true);
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally {
+            return listProduct;
+        }
+    }
+    
+    
+    private void seticon() {
+         //Sets form icon
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/Icons/wrench.png")));
+    }
+
+    /**
+     * @param args the command line arguments
+     */
+//    public static void main(String args[]) {
+//        /* Set the Nimbus look and feel */
+//        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+//        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+//         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+//         */
+//        try {
+//            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+//                if ("Nimbus".equals(info.getName())) {
+//                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+//                    break;
+//                }
+//            }
+//        } catch (ClassNotFoundException ex) {
+//            java.util.logging.Logger.getLogger(JFrameClientManagement.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (InstantiationException ex) {
+//            java.util.logging.Logger.getLogger(JFrameClientManagement.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (IllegalAccessException ex) {
+//            java.util.logging.Logger.getLogger(JFrameClientManagement.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+//            java.util.logging.Logger.getLogger(JFrameClientManagement.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+//        }
+//        //</editor-fold>
+//        //</editor-fold>
+//
+//        java.awt.EventQueue.invokeLater(() -> {
+//            new JFrameClientManagement().setVisible(true);
+//        });
+//    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jBtb_AddNCar;
+    private javax.swing.JButton jBtnAddUserInTbl;
+    private javax.swing.JButton jBtnBack;
+    private javax.swing.JButton jBtnCarAdd;
+    private javax.swing.JButton jBtnCarOwnChk;
+    private javax.swing.JButton jBtnClear;
+    private javax.swing.JButton jBtnDelUserInTbl;
+    private javax.swing.JButton jBtnShowAllCrs;
+    private javax.swing.JButton jBtnUpdateUserInTbl;
+    private javax.swing.JButton jButtonFirst;
+    private javax.swing.JButton jButtonLast;
+    private javax.swing.JButton jButtonNext;
+    private javax.swing.JButton jButtonPrevious;
+    private javax.swing.JComboBox<String> jCmbBxOrdrAscDsc;
+    private javax.swing.JComboBox<String> jComBoxSearchClBy;
+    private javax.swing.JComboBox jComboBoxPage;
+    private javax.swing.JFrame jFrmCarAdd;
+    private javax.swing.JFrame jFrmClientCarCheck;
+    private javax.swing.JLabel jLabelStatusHalaman;
+    private javax.swing.JLabel jLabelTotalData;
+    private javax.swing.JLabel jLabel_minimizeClMan;
+    private javax.swing.JLabel jLblAltPhoneNum;
+    private javax.swing.JLabel jLblCLname;
+    private javax.swing.JLabel jLblCarAddNumReg;
+    private javax.swing.JLabel jLblCarChkBackground;
+    private javax.swing.JLabel jLblCarChkCls;
+    private javax.swing.JLabel jLblCarsOwned;
+    private javax.swing.JLabel jLblClId;
+    private javax.swing.JLabel jLblMainImage;
+    private javax.swing.JLabel jLblPIC;
+    private javax.swing.JLabel jLblSearchBy;
+    private javax.swing.JLabel jLblTopCarrAdd;
+    private javax.swing.JLabel jLblTopClMan;
+    private javax.swing.JLabel jLblTopOfCAddClose;
+    private javax.swing.JLabel jLblTopOfCAddMin;
+    private javax.swing.JLabel jLbl_ClientEmail;
+    private javax.swing.JLabel jLbl_ClientEmailSecond;
+    private javax.swing.JLabel jLbl_ClientFName;
+    private javax.swing.JLabel jLbl_ClientID;
+    private javax.swing.JLabel jLbl_ClientName;
+    private javax.swing.JLabel jLbl_ClientPhoneNum;
+    private javax.swing.JLabel jLbl_clts;
+    private javax.swing.JLabel jLbl_minClMan;
+    private javax.swing.JLabel jLblcCarChk;
+    private javax.swing.JLabel jLvlCarChkMin;
+    private javax.swing.JPanel jPnlALL;
+    private javax.swing.JPanel jPnlMain;
+    private javax.swing.JPanel jPnlPaging;
+    private javax.swing.JPanel jPnlSeeCarOwners;
+    private javax.swing.JPanel jPnlTop;
+    private javax.swing.JPanel jPnlTopBar;
+    private javax.swing.JPanel jPnlTopCarrAdd;
+    private javax.swing.JPanel jPnl_ClinetManagement;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTable jTb_Cars;
+    private javax.swing.JTable jTblCarAdd;
+    private javax.swing.JTable jTblClients;
+    private javax.swing.JTextField jTxtClId;
+    private javax.swing.JTextField jTxtFldClName;
+    private javax.swing.JTextField jTxtFldRegNCA;
+    private javax.swing.JTextField jTxtFld_ClientEmail;
+    private javax.swing.JTextField jTxtFld_ClientEmailSecond;
+    private javax.swing.JTextField jTxtFld_ClientFName;
+    private javax.swing.JTextField jTxtFld_ClientID;
+    private javax.swing.JTextField jTxtFld_ClientName;
+    private javax.swing.JTextField jTxtFld_ClientPhoneNum;
+    private javax.swing.JTextField jTxtFld_ClientPhoneNumAlt;
+    private javax.swing.JTextField jTxtFld_Srch;
+    // End of variables declaration//GEN-END:variables
+}
